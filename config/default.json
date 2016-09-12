@@ -5,5 +5,9 @@
     },
     "server": {
         "port": 3030
+    },
+    "socket": {
+        "hostname": "localhost",
+        "port": 3030
     }
 }

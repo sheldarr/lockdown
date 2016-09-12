@@ -2,19 +2,27 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import moment from 'moment';
 import config from './config/default.json';
+import moment from 'moment';
 
 const Application = React.createClass({
     getInitialState() {
         const currentUserId = Number(localStorage.getItem('currentUserId'));
 
-        return {currentUserId: currentUserId, devices: [], lastRefreshDate: "", users: []}
+        return {currentUserId: currentUserId, devices: [], lastRefreshDate: "", socket: undefined, users: []}
     },
 
     componentDidMount() {
         this.refreshDevices();
         this.refreshUsers();
+
+        const socket = io.connect(`http://${config.socket.hostname}:${config.socket.port}`);
+
+        socket.on('update', (data) => {
+            console.log(data);
+        });
+
+        this.setState(socket);
 
         setInterval(this.refreshDevices, 5000)
     },
