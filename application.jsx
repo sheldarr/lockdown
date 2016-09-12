@@ -5,6 +5,10 @@ import ReactDOM from 'react-dom';
 import config from './config/default.json';
 import moment from 'moment';
 
+toastr.options.closeButton = true;
+toastr.options.closeDuration = 5000;
+toastr.options.progressBar = true;
+
 const Application = React.createClass({
     getInitialState() {
         const currentUserId = Number(localStorage.getItem('currentUserId'));
@@ -18,13 +22,17 @@ const Application = React.createClass({
 
         const socket = io.connect(`http://${config.socket.hostname}:${config.socket.port}`);
 
-        socket.on('update', (data) => {
-            console.log(data);
+        socket.on('broadcast-release', (data) => {
+            toastr.success(`${data.modificationDate} ${data.entityName} released by ${data.modifiedByName}`)
+            this.refreshDevices();
         });
 
-        this.setState(socket);
+        socket.on('broadcast-reservation', (data) => {
+            toastr.success(`${data.modificationDate} ${data.entityName} reserved by ${data.modifiedByName}`)
+            this.refreshDevices();
+        });
 
-        setInterval(this.refreshDevices, 5000)
+        this.setState({socket});
     },
 
     refreshDevices() {
@@ -69,8 +77,21 @@ const Application = React.createClass({
             return user.id === this.state.currentUserId;
         })
 
+        const entity = this.state.devices.find((entity) => {
+            return entity.id === deviceId
+        })
+
         const lastModifiedBy = currentUser.name;
         const lastModificationDate = moment().format();
+
+        console.log(entity);
+
+        this.state.socket.emit('release', {
+            modifiedById: currentUser.id,
+            modifiedByName: currentUser.name,
+            modificationDate: lastModificationDate,
+            entityName: `${entity.id} ${entity.type}`
+        });
 
         fetch(`/api/device/${deviceId}`, {
             method: 'PUT',
@@ -99,9 +120,6 @@ const Application = React.createClass({
                         <div className="panel-body">
                             <div className="row">
                                 <div className="col-md-9">
-                                    <button className="btn btn-default" onClick={this.refreshDevices} type="button" >
-                                        {'Refresh'}
-                                    </button>
                                     {` Last refresh date: ${this.state.lastRefreshDate}`}
                                 </div>
                                 <div className="col-md-3">
@@ -131,6 +149,7 @@ const Application = React.createClass({
                                             return (
                                                 <tr key={device.id}>
                                                     <td>{device.type} {device.id}</td>
+                                                    <td></td>
                                                     <td>{device.lastModificationDate}</td>
                                                     <td>{device.lastModifiedBy}</td>
                                                     <td>{device.reserved ? <span className="label label-danger">{'Reserved'}</span>
@@ -138,7 +157,7 @@ const Application = React.createClass({
                                                     </td>
                                                     <td>
                                                         <button className="btn btn-info" disabled={this.state.currentUserId == 0} onClick={this.toggleDeviceReservation.bind(this, device.id)} type="button" >
-                                                            {device.reserved ? 'Free' : 'Reserve'}
+                                                            {device.reserved ? 'Release' : 'Reserve'}
                                                         </button>
                                                     </td>
                                                 </tr>

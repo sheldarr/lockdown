@@ -60,11 +60,11 @@ server.listen(port, () => {
 });
 
 io.on('connection', function (socket) {
-    socket.emit('update', {
-        modifiedBy: "",
-        modificationDate: ""
+    socket.on('release', function (data) {
+        io.sockets.emit('broadcast-release', data)
     });
 
-    socket.on('broadcast', function (data) {
+    socket.on('reservation', function (data) {
+        io.sockets.emit('broadcast-reservation', data)
     });
 });

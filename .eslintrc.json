@@ -9,7 +9,8 @@
         "plugin:react/recommended"
     ],
     "globals": {
-        "io": false
+        "io": false,
+        "toastr": false
     },
     "parserOptions": {
         "ecmaVersion": 6,
