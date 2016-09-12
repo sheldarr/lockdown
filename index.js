@@ -4,12 +4,12 @@ const winston = require('winston');
 const path = require('path');
 const morgan = require('morgan');
 const fs = require('fs');
-const devicesRouter = require('./src/routers/devicesRouter');
-const usersRouter = require('./src/routers/usersRouter');
 const bodyParser = require('body-parser');
 const nconf = require('nconf');
 var server = require('http').Server(application);
 var io = require('socket.io')(server);
+const devicesRouter = require('./src/routers/devicesRouter')(io);
+const usersRouter = require('./src/routers/usersRouter');
 
 nconf.argv()
     .env()
@@ -60,11 +60,9 @@ server.listen(port, () => {
 });
 
 io.on('connection', function (socket) {
-    socket.on('release', function (data) {
-        io.sockets.emit('broadcast-release', data)
-    });
+    logger.info(`Socket connected: ${socket.id}`)
+});
 
-    socket.on('reservation', function (data) {
-        io.sockets.emit('broadcast-reservation', data)
-    });
+io.on('disconenct', function (socket) {
+    logger.info(`Socket disconnected: ${socket.id}`)
 });

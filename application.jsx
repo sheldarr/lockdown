@@ -13,7 +13,7 @@ const Application = React.createClass({
     getInitialState() {
         const currentUserId = Number(localStorage.getItem('currentUserId'));
 
-        return {currentUserId: currentUserId, devices: [], lastRefreshDate: "", socket: undefined, users: []}
+        return {currentUserId: currentUserId, devices: [], lastSync: "", socket: undefined, users: []}
     },
 
     componentDidMount() {
@@ -22,13 +22,15 @@ const Application = React.createClass({
 
         const socket = io.connect(`http://${config.socket.hostname}:${config.socket.port}`);
 
-        socket.on('broadcast-release', (data) => {
-            toastr.success(`${data.modificationDate} ${data.entityName} released by ${data.modifiedByName}`)
+        socket.on('release', (data) => {
+            console.log(data)
+            toastr.success(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.deviceType} ${data.deviceId} released by ${data.modifiedBy}`)
             this.refreshDevices();
         });
 
-        socket.on('broadcast-reservation', (data) => {
-            toastr.success(`${data.modificationDate} ${data.entityName} reserved by ${data.modifiedByName}`)
+        socket.on('reservation', (data) => {
+            console.log(data)
+            toastr.error(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.deviceType} ${data.deviceId} reserved by ${data.modifiedBy}`)
             this.refreshDevices();
         });
 
@@ -39,7 +41,7 @@ const Application = React.createClass({
         fetch(`http://${config.api.hostname}:${config.api.port}/api/device`).then((response) => {
             return response.json();
         }).then((devices) => {
-            this.setState({devices, lastRefreshDate: moment().format()});
+            this.setState({devices, lastSync: moment().format()});
         }).catch((error) => {
             console.log(`Device fetch error: ${error}`);
         });
@@ -77,21 +79,8 @@ const Application = React.createClass({
             return user.id === this.state.currentUserId;
         })
 
-        const entity = this.state.devices.find((entity) => {
-            return entity.id === deviceId
-        })
-
         const lastModifiedBy = currentUser.name;
         const lastModificationDate = moment().format();
-
-        console.log(entity);
-
-        this.state.socket.emit('release', {
-            modifiedById: currentUser.id,
-            modifiedByName: currentUser.name,
-            modificationDate: lastModificationDate,
-            entityName: `${entity.id} ${entity.type}`
-        });
 
         fetch(`/api/device/${deviceId}`, {
             method: 'PUT',
@@ -120,7 +109,7 @@ const Application = React.createClass({
                         <div className="panel-body">
                             <div className="row">
                                 <div className="col-md-9">
-                                    {` Last refresh date: ${this.state.lastRefreshDate}`}
+                                    {` Last sync: ${this.state.lastSync}`}
                                 </div>
                                 <div className="col-md-3">
                                     <select className="form-control" onChange={this.setCurrentUser} value={this.state.currentUserId}>
