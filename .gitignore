@@ -1,3 +1,15 @@
+# Data
+devices.json
+users.json
+
+# Certificates
+*.crt
+*.key
+*.pem
+
+# Bundle
+bundle.js
+
 # Logs
 logs
 *.log
