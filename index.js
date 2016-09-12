@@ -7,9 +7,13 @@ const fs = require('fs');
 const devicesRouter = require('./src/routers/devicesRouter');
 const usersRouter = require('./src/routers/usersRouter');
 const bodyParser = require('body-parser');
+const nconf = require('nconf');
 
-const port = 3030;
+nconf.argv()
+    .env()
+    .file('./config/default.json');
 
+const port = nconf.get("server:port")
 const logger = new (winston.Logger)({
     transports: [
         new (winston.transports.Console)(),
@@ -34,8 +38,6 @@ application.use(allowCrossDomain);
 application.use(morgan('combined', {
     stream: apiLogStream
 }));
-
-application.use(morgan());
 
 application.use(bodyParser.json());
 

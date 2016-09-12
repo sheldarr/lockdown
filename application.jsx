@@ -3,6 +3,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import moment from 'moment';
+import config from './config/default.json';
 
 const Application = React.createClass({
     getInitialState() {
@@ -19,7 +20,7 @@ const Application = React.createClass({
     },
 
     refreshDevices() {
-        fetch('http://10.57.200.179:3030/api/device').then((response) => {
+        fetch(`http://${config.api.hostname}:${config.api.port}/api/device`).then((response) => {
             return response.json();
         }).then((devices) => {
             this.setState({devices, lastRefreshDate: moment().format()});
@@ -29,7 +30,7 @@ const Application = React.createClass({
     },
 
     refreshUsers() {
-        fetch('http://10.57.200.179:3030/api/user').then((response) => {
+        fetch(`http://${config.api.hostname}:${config.api.port}/api/user`).then((response) => {
             return response.json();
         }).then((users) => {
             users.sort(function(a, b){
