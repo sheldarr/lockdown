@@ -23,13 +23,11 @@ const Application = React.createClass({
         const socket = io.connect(`http://${config.socket.hostname}:${config.socket.port}`);
 
         socket.on('release', (data) => {
-            console.log(data)
             toastr.success(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.deviceType} ${data.deviceId} released by ${data.modifiedBy}`)
             this.refreshDevices();
         });
 
         socket.on('reservation', (data) => {
-            console.log(data)
             toastr.error(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.deviceType} ${data.deviceId} reserved by ${data.modifiedBy}`)
             this.refreshDevices();
         });

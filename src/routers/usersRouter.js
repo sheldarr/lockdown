@@ -1,10 +1,12 @@
-const express = require('express');
-const fs = require('fs');
+'use strict';
 
-const usersRouter = new express.Router();
+var express = require('express');
+var fs = require('fs');
 
-usersRouter.get('/user', (request, response, next) => {
-    fs.readFile('./var/data/users.json', 'utf8', (error, data) => {
+var usersRouter = new express.Router();
+
+usersRouter.get('/user', function (request, response, next) {
+    fs.readFile('./var/data/users.json', 'utf8', function (error, data) {
         if (error) {
             return next(error);
         }

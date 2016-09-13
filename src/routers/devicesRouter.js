@@ -1,11 +1,13 @@
-const express = require('express');
-const fs = require('fs');
+'use strict';
 
-module.exports = (io) => {
-    const devicesRouter = new express.Router();
+var express = require('express');
+var fs = require('fs');
 
-    devicesRouter.get('/device', (request, response, next) => {
-        fs.readFile('./var/data/devices.json', 'utf8', (error, data) => {
+module.exports = function (io) {
+    var devicesRouter = new express.Router();
+
+    devicesRouter.get('/device', function (request, response, next) {
+        fs.readFile('./var/data/devices.json', 'utf8', function (error, data) {
             if (error) {
                 return next(error);
             }
@@ -14,36 +16,36 @@ module.exports = (io) => {
         });
     });
 
-    devicesRouter.put('/device/:deviceId', (request, response, next) => {
-        fs.readFile('./var/data/devices.json', 'utf8', (error, data) => {
+    devicesRouter.put('/device/:deviceId', function (request, response, next) {
+        fs.readFile('./var/data/devices.json', 'utf8', function (error, data) {
             if (error) {
                 return next(error);
             }
 
-            const devices = JSON.parse(data);
+            var devices = JSON.parse(data);
 
-            const device = devices.find((device) => {
+            var device = devices.find(function (device) {
                 return device.id === Number(request.params.deviceId);
             });
 
             device.lastModifiedBy = request.body.lastModifiedBy;
-            device.lastModificationDate = request.body.lastModificationDate
+            device.lastModificationDate = request.body.lastModificationDate;
             device.reserved = !device.reserved;
 
             fs.writeFile('./var/data/devices.json', JSON.stringify(devices));
 
-            const eventName = device.reserved ? 'reservation' : 'release';
+            var eventName = device.reserved ? 'reservation' : 'release';
 
             io.sockets.emit(eventName, {
                 modifiedBy: request.body.lastModifiedBy,
                 modificationDate: request.body.lastModificationDate,
                 deviceId: device.id,
                 deviceType: device.type
-            })
+            });
 
             response.sendStatus(200);
         });
     });
 
     return devicesRouter;
-}
+};
