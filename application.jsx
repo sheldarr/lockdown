@@ -103,15 +103,15 @@ const Application = React.createClass({
             <div className="row" style={{
                 paddingTop: '5%'
             }}>
-                <div className="col-md-10 col-md-offset-1">
+                <div className="col-sm-10 col-sm-offset-1">
                     <div className="panel panel-primary">
                         <div className="panel-heading">{'Device Reservation'}</div>
                         <div className="panel-body">
                             <div className="row">
-                                <div className="col-md-9">
+                                <div className="col-sm-9">
                                     {` Last sync: ${this.state.lastSync}`}
                                 </div>
-                                <div className="col-md-3">
+                                <div className="col-sm-3">
                                     <select className="form-control" onChange={this.setCurrentUser} value={this.state.currentUserId}>
                                         {this.state.users.map(user => {
                                             return (
