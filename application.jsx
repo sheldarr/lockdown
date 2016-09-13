@@ -107,6 +107,7 @@ const Application = React.createClass({
                         <div className="panel-body">
                             <div className="row">
                                 <div className="col-sm-9">
+                                    <button className="btn btn-info" onClick={this.refreshDevices}><span className="glyphicon glyphicon-refresh"></span></button>
                                     {` Last sync: ${this.state.lastSync}`}
                                 </div>
                                 <div className="col-sm-3">
