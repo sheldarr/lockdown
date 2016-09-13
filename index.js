@@ -1,3 +1,4 @@
+require('babel-polyfill');
 const express = require('express');
 const application = express();
 const winston = require('winston');
