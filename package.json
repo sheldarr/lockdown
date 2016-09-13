@@ -10,7 +10,7 @@
     "start": "forever ./index.js",
     "start-dev": "nodemon ./index.js",
     "watch": "webpack --progress --color --watch",
-    "transpile": "babel . --out-dir es5 --ignore application.jsx,bin,node_modules"
+    "transpile": "babel . --out-dir . --ignore application.jsx,bin,node_modules,public,webpack.config.js"
   },
   "author": "",
   "license": "MIT",
