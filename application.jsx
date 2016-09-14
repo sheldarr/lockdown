@@ -25,12 +25,12 @@ const Application = React.createClass({
         const socket = io.connect(`http://${config.socket.hostname}:${config.socket.port}`);
 
         socket.on('unlock', (data) => {
-            toastr.success(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.entityName} unlocked by ${data.modifiedBy}`)
+            toastr.success(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.entityName} unlocked by ${this.getUserNameById(data.modifiedById)}`)
             this.refreshEntities();
         });
 
         socket.on('lock', (data) => {
-            toastr.error(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.entityName} locked by ${data.modifiedBy}`)
+            toastr.error(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.entityName} locked by ${this.getUserNameById(data.modifiedById)}`)
             this.refreshEntities();
         });
 
@@ -79,13 +79,13 @@ const Application = React.createClass({
             return user.id === this.state.currentUserId;
         })
 
-        const lastModifiedBy = currentUser.name;
+        const lastModifiedById = currentUser.id;
         const lastModificationDate = moment().format();
 
         fetch(`/api/entity/${entityId}`, {
             method: 'PUT',
             body: JSON.stringify({
-                lastModifiedBy,
+                lastModifiedById,
                 lastModificationDate
             }),
             headers: {
@@ -96,10 +96,18 @@ const Application = React.createClass({
         });
     },
 
+    getUserNameById(id) {
+        const user = this.state.users.find((user) => {
+            return user.id === id;
+        })
+
+        return user.name;
+    },
+
     render() {
         return (
             <div className="row" style={{
-                paddingTop: '5%'
+                paddingTop: '1%'
             }}>
                 <div className="col-sm-10 col-sm-offset-1">
                     <div className="panel panel-primary">
@@ -137,12 +145,12 @@ const Application = React.createClass({
                                                 <tr key={entity.id}>
                                                     <td>{entity.name}</td>
                                                     <td>{entity.lastModificationDate}</td>
-                                                    <td>{entity.lastModifiedBy}</td>
+                                                    <td>{this.getUserNameById(entity.lastModifiedById)}</td>
                                                     <td>{entity.locked ? <span className="label label-danger">{'Locked'}</span>
                                                         : <span className="label label-success">{'Unlocked'}</span>}
                                                     </td>
                                                     <td>
-                                                        <button className="btn btn-xs btn-info" disabled={this.state.currentUserId == 0} onClick={this.toggleEntity.bind(this, entity.id)} type="button" >
+                                                        <button className="btn btn-xs btn-info" disabled={this.state.currentUserId === 0 || (entity.locked && this.state.currentUserId !== entity.lastModifiedById)} onClick={this.toggleEntity.bind(this, entity.id)} type="button" >
                                                             {entity.locked ? 'Unlock' : 'Lock'}
                                                         </button>
                                                     </td>

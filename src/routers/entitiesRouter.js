@@ -28,7 +28,7 @@ module.exports = function (io) {
                 return entity.id === Number(request.params.entityId);
             });
 
-            entity.lastModifiedBy = request.body.lastModifiedBy;
+            entity.lastModifiedById = Number(request.body.lastModifiedById);
             entity.lastModificationDate = request.body.lastModificationDate;
             entity.locked = !entity.locked;
 
@@ -38,7 +38,7 @@ module.exports = function (io) {
 
             io.sockets.emit(eventName, {
                 entityName: entity.name,
-                modifiedBy: request.body.lastModifiedBy,
+                modifiedById: request.body.lastModifiedById,
                 modificationDate: request.body.lastModificationDate
             });
 
