@@ -15,35 +15,35 @@ const Application = React.createClass({
     getInitialState() {
         const currentUserId = Number(localStorage.getItem('currentUserId'));
 
-        return {currentUserId: currentUserId, devices: [], lastSync: "", socket: undefined, users: []}
+        return {currentUserId: currentUserId, entities: [], lastSync: "", socket: undefined, users: []}
     },
 
     componentDidMount() {
-        this.refreshDevices();
+        this.refreshEntities();
         this.refreshUsers();
 
         const socket = io.connect(`http://${config.socket.hostname}:${config.socket.port}`);
 
         socket.on('unlock', (data) => {
-            toastr.success(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.deviceName} unlocked by ${data.modifiedBy}`)
-            this.refreshDevices();
+            toastr.success(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.entityName} unlocked by ${data.modifiedBy}`)
+            this.refreshEntities();
         });
 
         socket.on('lock', (data) => {
-            toastr.error(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.deviceName} locked by ${data.modifiedBy}`)
-            this.refreshDevices();
+            toastr.error(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.entityName} locked by ${data.modifiedBy}`)
+            this.refreshEntities();
         });
 
         this.setState({socket});
     },
 
-    refreshDevices() {
-        fetch(`http://${config.api.hostname}:${config.api.port}/api/device`).then((response) => {
+    refreshEntities() {
+        fetch(`http://${config.api.hostname}:${config.api.port}/api/entity`).then((response) => {
             return response.json();
-        }).then((devices) => {
-            this.setState({devices, lastSync: moment().format()});
+        }).then((entities) => {
+            this.setState({entities, lastSync: moment().format()});
         }).catch((error) => {
-            console.log(`Device fetch error: ${error}`);
+            console.log(`Entities fetch error: ${error}`);
         });
     },
 
@@ -63,7 +63,7 @@ const Application = React.createClass({
             })
             this.setState({users});
         }).catch((error) => {
-            console.log(`User fetch error: ${error}`);
+            console.log(`Users fetch error: ${error}`);
         });
     },
 
@@ -74,7 +74,7 @@ const Application = React.createClass({
         this.setState({currentUserId: userId});
     },
 
-    toggleDevice(deviceId) {
+    toggleEntity(entityId) {
         const currentUser = this.state.users.find((user) => {
             return user.id === this.state.currentUserId;
         })
@@ -82,7 +82,7 @@ const Application = React.createClass({
         const lastModifiedBy = currentUser.name;
         const lastModificationDate = moment().format();
 
-        fetch(`/api/device/${deviceId}`, {
+        fetch(`/api/entity/${entityId}`, {
             method: 'PUT',
             body: JSON.stringify({
                 lastModifiedBy,
@@ -91,10 +91,8 @@ const Application = React.createClass({
             headers: {
                 'Content-Type': 'application/json'
             },
-        }).then(() => {
-            this.refreshDevices();
         }).catch((error) => {
-            console.log(`Device update error: ${error}`);
+            console.log(`Entity update error: ${error}`);
         });
     },
 
@@ -109,7 +107,7 @@ const Application = React.createClass({
                         <div className="panel-body">
                             <div className="row">
                                 <div className="col-sm-9">
-                                    <button className="btn btn-info" onClick={this.refreshDevices}><span className="glyphicon glyphicon-refresh"></span></button>
+                                    <button className="btn btn-info" onClick={this.refreshEntities}><span className="glyphicon glyphicon-refresh"></span></button>
                                     {` Last sync: ${this.state.lastSync}`}
                                 </div>
                                 <div className="col-sm-3">
@@ -126,7 +124,7 @@ const Application = React.createClass({
                                 <table className="table table-condensed table-hover table-striped ">
                                     <thead>
                                         <tr>
-                                            <th>{'Device / Environment'}</th>
+                                            <th>{'Entity'}</th>
                                             <th>{'Last Modification Date'}</th>
                                             <th>{'Last Modified By'}</th>
                                             <th>{'Status'}</th>
@@ -134,18 +132,18 @@ const Application = React.createClass({
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {this.state.devices.map((device) => {
+                                        {this.state.entities.map((entity) => {
                                             return (
-                                                <tr key={device.id}>
-                                                    <td>{device.name}</td>
-                                                    <td>{device.lastModificationDate}</td>
-                                                    <td>{device.lastModifiedBy}</td>
-                                                    <td>{device.locked ? <span className="label label-danger">{'Locked'}</span>
+                                                <tr key={entity.id}>
+                                                    <td>{entity.name}</td>
+                                                    <td>{entity.lastModificationDate}</td>
+                                                    <td>{entity.lastModifiedBy}</td>
+                                                    <td>{entity.locked ? <span className="label label-danger">{'Locked'}</span>
                                                         : <span className="label label-success">{'Unlocked'}</span>}
                                                     </td>
                                                     <td>
-                                                        <button className="btn btn-xs btn-info" disabled={this.state.currentUserId == 0} onClick={this.toggleDevice.bind(this, device.id)} type="button" >
-                                                            {device.locked ? 'Unlock' : 'Lock'}
+                                                        <button className="btn btn-xs btn-info" disabled={this.state.currentUserId == 0} onClick={this.toggleEntity.bind(this, entity.id)} type="button" >
+                                                            {entity.locked ? 'Unlock' : 'Lock'}
                                                         </button>
                                                     </td>
                                                 </tr>

@@ -11,7 +11,7 @@ var bodyParser = require('body-parser');
 var nconf = require('nconf');
 var server = require('http').Server(application);
 var io = require('socket.io')(server);
-var devicesRouter = require('./src/routers/devicesRouter')(io);
+var entitiesRouter = require('./src/routers/entitiesRouter')(io);
 var usersRouter = require('./src/routers/usersRouter');
 
 nconf.argv().env().file('./config/default.json');
@@ -46,7 +46,7 @@ application.use(bodyParser.json());
 application.use('/bin', express.static(__dirname + '/bin'));
 application.use('/public', express.static(__dirname + '/public'));
 
-application.use('/api', devicesRouter);
+application.use('/api', entitiesRouter);
 application.use('/api', usersRouter);
 
 application.get('/', function (req, res) {
