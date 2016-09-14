@@ -123,7 +123,7 @@ const Application = React.createClass({
                                 </div>
                             </div>
                             <div className="row">
-                                <table className="table table-striped table-hover">
+                                <table className="table table-condensed table-hover table-striped ">
                                     <thead>
                                         <tr>
                                             <th>{'Device / Environment'}</th>
@@ -144,7 +144,7 @@ const Application = React.createClass({
                                                         : <span className="label label-success">{'Available'}</span>}
                                                     </td>
                                                     <td>
-                                                        <button className="btn btn-info" disabled={this.state.currentUserId == 0} onClick={this.toggleDeviceReservation.bind(this, device.id)} type="button" >
+                                                        <button className="btn btn-xs btn-info" disabled={this.state.currentUserId == 0} onClick={this.toggleDeviceReservation.bind(this, device.id)} type="button" >
                                                             {device.reserved ? 'Release' : 'Reserve'}
                                                         </button>
                                                     </td>
