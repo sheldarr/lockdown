@@ -7,8 +7,9 @@
     "node": "4.4.x"
   },
   "scripts": {
-    "start": "forever ./index.js",
+    "start": "forever start ./index.js",
     "start-dev": "nodemon ./index.js",
+    "stop": "forever stop ./index.js",
     "watch": "webpack --progress --color --watch",
     "transpile": "babel . --out-dir . --ignore application.jsx,bin,node_modules,public,webpack.config.js"
   },

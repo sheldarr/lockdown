@@ -1,0 +1,4 @@
+#toast-container > .toast {
+    background-image: none !important;
+    padding-left: 15px;
+}

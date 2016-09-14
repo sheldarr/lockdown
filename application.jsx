@@ -6,8 +6,10 @@ import config from './config/default.json';
 import moment from 'moment';
 
 toastr.options.closeButton = true;
-toastr.options.closeDuration = 5000;
+toastr.options.closeDuration = 300;
+toastr.options.extendedTimeOut = 1000
 toastr.options.progressBar = true;
+toastr.options.timout = 5000;
 
 const Application = React.createClass({
     getInitialState() {
