@@ -24,13 +24,13 @@ const Application = React.createClass({
 
         const socket = io.connect(`http://${config.socket.hostname}:${config.socket.port}`);
 
-        socket.on('release', (data) => {
-            toastr.success(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.deviceName} released by ${data.modifiedBy}`)
+        socket.on('unlock', (data) => {
+            toastr.success(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.deviceName} unlocked by ${data.modifiedBy}`)
             this.refreshDevices();
         });
 
-        socket.on('reservation', (data) => {
-            toastr.error(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.deviceName} reserved by ${data.modifiedBy}`)
+        socket.on('lock', (data) => {
+            toastr.error(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.deviceName} locked by ${data.modifiedBy}`)
             this.refreshDevices();
         });
 
@@ -74,7 +74,7 @@ const Application = React.createClass({
         this.setState({currentUserId: userId});
     },
 
-    toggleDeviceReservation(deviceId) {
+    toggleDevice(deviceId) {
         const currentUser = this.state.users.find((user) => {
             return user.id === this.state.currentUserId;
         })
@@ -140,12 +140,12 @@ const Application = React.createClass({
                                                     <td>{device.name}</td>
                                                     <td>{device.lastModificationDate}</td>
                                                     <td>{device.lastModifiedBy}</td>
-                                                    <td>{device.reserved ? <span className="label label-danger">{'Reserved'}</span>
-                                                        : <span className="label label-success">{'Available'}</span>}
+                                                    <td>{device.locked ? <span className="label label-danger">{'Locked'}</span>
+                                                        : <span className="label label-success">{'Unlocked'}</span>}
                                                     </td>
                                                     <td>
-                                                        <button className="btn btn-xs btn-info" disabled={this.state.currentUserId == 0} onClick={this.toggleDeviceReservation.bind(this, device.id)} type="button" >
-                                                            {device.reserved ? 'Release' : 'Reserve'}
+                                                        <button className="btn btn-xs btn-info" disabled={this.state.currentUserId == 0} onClick={this.toggleDevice.bind(this, device.id)} type="button" >
+                                                            {device.locked ? 'Unlock' : 'Lock'}
                                                         </button>
                                                     </td>
                                                 </tr>

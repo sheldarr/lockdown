@@ -30,11 +30,11 @@ module.exports = function (io) {
 
             device.lastModifiedBy = request.body.lastModifiedBy;
             device.lastModificationDate = request.body.lastModificationDate;
-            device.reserved = !device.reserved;
+            device.locked = !device.locked;
 
             fs.writeFile('./var/data/devices.json', JSON.stringify(devices));
 
-            var eventName = device.reserved ? 'reservation' : 'release';
+            var eventName = device.locked ? 'lock' : 'unlock';
 
             io.sockets.emit(eventName, {
                 deviceName: device.name,
