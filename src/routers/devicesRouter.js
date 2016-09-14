@@ -37,10 +37,9 @@ module.exports = function (io) {
             var eventName = device.reserved ? 'reservation' : 'release';
 
             io.sockets.emit(eventName, {
+                deviceName: device.name,
                 modifiedBy: request.body.lastModifiedBy,
-                modificationDate: request.body.lastModificationDate,
-                deviceId: device.id,
-                deviceType: device.type
+                modificationDate: request.body.lastModificationDate
             });
 
             response.sendStatus(200);

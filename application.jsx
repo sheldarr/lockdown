@@ -25,12 +25,12 @@ const Application = React.createClass({
         const socket = io.connect(`http://${config.socket.hostname}:${config.socket.port}`);
 
         socket.on('release', (data) => {
-            toastr.success(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.deviceType} ${data.deviceId} released by ${data.modifiedBy}`)
+            toastr.success(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.deviceName} released by ${data.modifiedBy}`)
             this.refreshDevices();
         });
 
         socket.on('reservation', (data) => {
-            toastr.error(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.deviceType} ${data.deviceId} reserved by ${data.modifiedBy}`)
+            toastr.error(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.deviceName} reserved by ${data.modifiedBy}`)
             this.refreshDevices();
         });
 
@@ -105,7 +105,7 @@ const Application = React.createClass({
             }}>
                 <div className="col-sm-10 col-sm-offset-1">
                     <div className="panel panel-primary">
-                        <div className="panel-heading">{'Device Reservation'}</div>
+                        <div className="panel-heading"><span className="glyphicon glyphicon-lock" aria-hidden="true"></span>{' Lockdown'}</div>
                         <div className="panel-body">
                             <div className="row">
                                 <div className="col-sm-9">
@@ -126,8 +126,7 @@ const Application = React.createClass({
                                 <table className="table table-striped table-hover">
                                     <thead>
                                         <tr>
-                                            <th>{'Device'}</th>
-                                            <th>{'IP'}</th>
+                                            <th>{'Device / Environment'}</th>
                                             <th>{'Last Modification Date'}</th>
                                             <th>{'Last Modified By'}</th>
                                             <th>{'Status'}</th>
@@ -138,8 +137,7 @@ const Application = React.createClass({
                                         {this.state.devices.map((device) => {
                                             return (
                                                 <tr key={device.id}>
-                                                    <td>{device.type} {device.id}</td>
-                                                    <td></td>
+                                                    <td>{device.name}</td>
                                                     <td>{device.lastModificationDate}</td>
                                                     <td>{device.lastModifiedBy}</td>
                                                     <td>{device.reserved ? <span className="label label-danger">{'Reserved'}</span>
