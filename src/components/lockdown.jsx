@@ -54,7 +54,7 @@ const Lockdown = React.createClass({
             entities.sort(sortAlphabetically);
             this.setState({entities, lastSync: moment().format()});
         }).catch((error) => {
-            console.log(`Entities fetch error: ${error}`);
+            console.log(error);
         });
     },
 
@@ -65,7 +65,7 @@ const Lockdown = React.createClass({
             users.sort(sortAlphabetically);
             this.setState({users});
         }).catch((error) => {
-            console.log(`Users fetch error: ${error}`);
+            console.log(error);
         });
     },
 
@@ -94,7 +94,7 @@ const Lockdown = React.createClass({
                 'Content-Type': 'application/json'
             },
         }).catch((error) => {
-            console.log(`Entity update error: ${error}`);
+            console.log(error);
         });
     },
 

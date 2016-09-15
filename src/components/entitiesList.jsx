@@ -5,7 +5,7 @@ import config from '../../config/default.json';
 
 const EntitiesList = React.createClass({
     getInitialState() {
-        return {entities: []}
+        return {entities: [], entityName: ''}
     },
 
     componentDidMount() {
@@ -18,9 +18,43 @@ const EntitiesList = React.createClass({
         }).then((entities) => {
             this.setState({entities});
         }).catch((error) => {
-            console.log(`Entities fetch error: ${error}`);
+            console.log(error);
         });
     },
+
+    createEntity() {
+        fetch(`http://${config.api.hostname}:${config.api.port}/api/entity`, {
+            method: 'POST',
+            body: JSON.stringify({
+                name: this.state.entityName
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then(() => {
+            this.refreshEntities();
+        }).catch((error) => {
+            console.log(error);
+        });
+
+    },
+
+    removeEntity(entityId) {
+        fetch(`http://${config.api.hostname}:${config.api.port}/api/entity/${entityId}`, {
+            method: 'DELETE',
+        }).then(() => {
+            this.refreshEntities();
+        }).catch((error) => {
+            console.log(error);
+        });
+    },
+
+    changeEntityName(event) {
+        this.setState({
+            entityName: event.target.value
+        });
+    },
+
     render() {
         return (
             <div style={{
@@ -34,9 +68,9 @@ const EntitiesList = React.createClass({
                         <div className="panel-body">
                             <div>
                                 <div className="input-group">
-                                    <input type="text" className="form-control" placeholder="Entity name"/>
+                                    <input type="text" className="form-control" onChange={this.changeEntityName} placeholder="Entity name" value={this.state.entityName}/>
                                     <span className="input-group-btn">
-                                        <button className="btn btn-success" type="button">
+                                        <button className="btn btn-success" disabled={!this.state.entityName} onClick={this.createEntity} type="button">
                                             <span className="glyphicon glyphicon-plus"/>
                                         </button>
                                     </span>
@@ -56,7 +90,7 @@ const EntitiesList = React.createClass({
                                                 <tr key={entity.id}>
                                                     <td>{entity.name}</td>
                                                     <td>
-                                                        <button className="btn btn-xs btn-danger pull-right">
+                                                        <button className="btn btn-xs btn-danger pull-right" onClick={this.removeEntity.bind(this, entity.id)}>
                                                             <span className="glyphicon glyphicon-remove"/>
                                                         </button>
                                                     </td>
