@@ -26,12 +26,13 @@ const EntitiesList = React.createClass({
         fetch(`http://${config.api.hostname}:${config.api.port}/api/entity`, {
             method: 'POST',
             body: JSON.stringify({
-                name: this.state.entityName
+                entityName: this.state.entityName
             }),
             headers: {
                 'Content-Type': 'application/json'
             },
         }).then(() => {
+            this.setState({entityName: ''});
             this.refreshEntities();
         }).catch((error) => {
             console.log(error);
