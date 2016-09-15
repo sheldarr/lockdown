@@ -44,6 +44,11 @@ const Lockdown = React.createClass({
             this.refreshEntities();
         });
 
+        socket.on('unlock-all', (data) => {
+            toastr.info(`${moment(data.modificationDate).format('HH:mm:ss')} All entities unlocked`)
+            this.refreshEntities();
+        });
+
         socket.on('unlock', (data) => {
             toastr.success(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.entityName} unlocked by ${this.getUserNameById(data.modifiedById)}`)
             this.refreshEntities();

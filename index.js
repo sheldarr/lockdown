@@ -13,6 +13,8 @@ var server = require('http').Server(application);
 var io = require('socket.io')(server);
 var entitiesRouter = require('./src/routers/entitiesRouter')(io);
 var usersRouter = require('./src/routers/usersRouter');
+var schedule = require('node-schedule');
+var entitiesService = require('./src/services/entitiesService');
 
 nconf.argv().env().file('./config/default.json');
 
@@ -55,6 +57,13 @@ application.get('*', function (req, res) {
 
 server.listen(port, function () {
     logger.info('PID ' + process.pid + ' Server is running on port: ' + port);
+});
+
+schedule.scheduleJob('0 0 * * *', function(){
+    entitiesService.unlockAll(function () {
+        logger.info('All entities unlocked');
+        io.sockets.emit("unlock-all", {});
+    });
 });
 
 io.on('connection', function (socket) {
