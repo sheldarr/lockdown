@@ -24,9 +24,15 @@ module.exports = function (io) {
 
             var entities = JSON.parse(data);
 
-            entities.splice(entities.findIndex(function(entity) {
+            var entity = entities.find(function (entity) {
                 return entity.id === Number(request.params.entityId);
-            }), 1);
+            });
+
+            if (!entity) {
+                return response.sendStatus(404);
+            }
+
+            entities.splice(entities.indexOf(entity), 1);
 
             fs.writeFile('./var/data/entities.json', JSON.stringify(entities));
 
@@ -86,6 +92,18 @@ module.exports = function (io) {
                 return entity.id === Number(request.params.entityId);
             });
 
+            if (!entity) {
+                return response.sendStatus(404);
+            }
+
+            if (!request.body.lastModifiedById || !request.body.lastModificationDate) {
+                return response.sendStatus(400);
+            }
+
+            if (entity.locked && entity.lastModifiedById !== Number(request.body.lastModifiedById)) {
+                return response.sendStatus(403);
+            }
+
             entity.lastModifiedById = Number(request.body.lastModifiedById);
             entity.lastModificationDate = request.body.lastModificationDate;
             entity.locked = !entity.locked;
@@ -96,8 +114,8 @@ module.exports = function (io) {
 
             io.sockets.emit(eventName, {
                 entityName: entity.name,
-                modifiedById: request.body.lastModifiedById,
-                modificationDate: request.body.lastModificationDate
+                modifiedById: entity.lastModifiedById,
+                modificationDate: entity.lastModificationDate
             });
 
             response.sendStatus(200);
