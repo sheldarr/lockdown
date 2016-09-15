@@ -49,7 +49,7 @@ application.use('/public', express.static(__dirname + '/public'));
 application.use('/api', entitiesRouter);
 application.use('/api', usersRouter);
 
-application.get('/', function (req, res) {
+application.get('*', function (req, res) {
     res.sendFile(path.join(__dirname + '/public/index.html'));
 });
 
