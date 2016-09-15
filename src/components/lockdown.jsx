@@ -70,6 +70,7 @@ const Lockdown = React.createClass({
             this.setState({entities, lastSync: moment().format()});
         }).catch((error) => {
             console.log(error);
+            setTimeout(this.refreshEntities, 1000);
         });
     },
 
