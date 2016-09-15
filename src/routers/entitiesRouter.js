@@ -12,7 +12,11 @@ module.exports = function (io) {
                 return next(error);
             }
 
-            response.json(JSON.parse(data));
+            try {
+                return response.json(JSON.parse(data));
+            } catch (error) {
+                return response.sendStatus(503);
+            }
         });
     });
 
