@@ -36,6 +36,10 @@ module.exports = function (io) {
 
             fs.writeFile('./var/data/entities.json', JSON.stringify(entities));
 
+            io.sockets.emit("delete", {
+                entityName: entity.name
+            });
+
             response.sendStatus(200);
         });
     });
@@ -68,12 +72,8 @@ module.exports = function (io) {
 
             fs.writeFile('./var/data/entities.json', JSON.stringify(entities));
 
-            var eventName = entity.locked ? 'lock' : 'unlock';
-
-            io.sockets.emit(eventName, {
-                entityName: entity.name,
-                modifiedById: request.body.lastModifiedById,
-                modificationDate: request.body.lastModificationDate
+            io.sockets.emit("create", {
+                entityName: entity.name
             });
 
             response.sendStatus(200);

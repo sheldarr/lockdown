@@ -34,6 +34,16 @@ const Lockdown = React.createClass({
 
         const socket = io.connect(`http://${config.socket.hostname}:${config.socket.port}`);
 
+        socket.on('create', (data) => {
+            toastr.info(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.entityName} created`)
+            this.refreshEntities();
+        });
+
+        socket.on('delete', (data) => {
+            toastr.info(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.entityName} deleted`)
+            this.refreshEntities();
+        });
+
         socket.on('unlock', (data) => {
             toastr.success(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.entityName} unlocked by ${this.getUserNameById(data.modifiedById)}`)
             this.refreshEntities();
