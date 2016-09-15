@@ -38,13 +38,13 @@ module.exports = function (io) {
 
             entities.splice(entities.indexOf(entity), 1);
 
-            fs.writeFile('./var/data/entities.json', JSON.stringify(entities));
+            fs.writeFile('./var/data/entities.json', JSON.stringify(entities), function () {
+                io.sockets.emit("delete", {
+                    entityName: entity.name
+                });
 
-            io.sockets.emit("delete", {
-                entityName: entity.name
+                response.sendStatus(200);
             });
-
-            response.sendStatus(200);
         });
     });
 
@@ -74,13 +74,13 @@ module.exports = function (io) {
 
             entities.push(entity);
 
-            fs.writeFile('./var/data/entities.json', JSON.stringify(entities));
+            fs.writeFile('./var/data/entities.json', JSON.stringify(entities), function () {
+                io.sockets.emit("create", {
+                    entityName: entity.name
+                });
 
-            io.sockets.emit("create", {
-                entityName: entity.name
+                response.sendStatus(200);
             });
-
-            response.sendStatus(200);
         });
     });
 
@@ -112,17 +112,17 @@ module.exports = function (io) {
             entity.lastModificationDate = request.body.lastModificationDate;
             entity.locked = !entity.locked;
 
-            fs.writeFile('./var/data/entities.json', JSON.stringify(entities));
+            fs.writeFile('./var/data/entities.json', JSON.stringify(entities), function () {
+                var eventName = entity.locked ? 'lock' : 'unlock';
 
-            var eventName = entity.locked ? 'lock' : 'unlock';
+                io.sockets.emit(eventName, {
+                    entityName: entity.name,
+                    modifiedById: entity.lastModifiedById,
+                    modificationDate: entity.lastModificationDate
+                });
 
-            io.sockets.emit(eventName, {
-                entityName: entity.name,
-                modifiedById: entity.lastModifiedById,
-                modificationDate: entity.lastModificationDate
+                response.sendStatus(200);
             });
-
-            response.sendStatus(200);
         });
     });
 

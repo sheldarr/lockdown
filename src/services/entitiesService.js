@@ -14,8 +14,7 @@ var entitiesService = {
                 entity.locked = false;
             });
 
-            fs.writeFile('./var/data/entities.json', JSON.stringify(entities));
-            done();
+            fs.writeFile('./var/data/entities.json', JSON.stringify(entities), done);
         });
     }
 }
