@@ -10,6 +10,17 @@ toastr.options.extendedTimeOut = 1000
 toastr.options.progressBar = true;
 toastr.options.timout = 5000;
 
+const sortAlphabetically = function(a, b){
+    if(a.name < b.name) {
+        return -1;
+    }
+    if(a.name > b.name) {
+        return 1;
+    }
+
+    return 0;
+};
+
 const Lockdown = React.createClass({
     getInitialState() {
         const currentUserId = Number(localStorage.getItem('currentUserId'));
@@ -40,6 +51,7 @@ const Lockdown = React.createClass({
         fetch(`http://${config.api.hostname}:${config.api.port}/api/entity`).then((response) => {
             return response.json();
         }).then((entities) => {
+            entities.sort(sortAlphabetically);
             this.setState({entities, lastSync: moment().format()});
         }).catch((error) => {
             console.log(`Entities fetch error: ${error}`);
@@ -50,16 +62,7 @@ const Lockdown = React.createClass({
         fetch(`http://${config.api.hostname}:${config.api.port}/api/user`).then((response) => {
             return response.json();
         }).then((users) => {
-            users.sort(function(a, b){
-                if(a.name < b.name) {
-                    return -1;
-                }
-                if(a.name > b.name) {
-                    return 1;
-                }
-
-                return 0;
-            })
+            users.sort(sortAlphabetically);
             this.setState({users});
         }).catch((error) => {
             console.log(`Users fetch error: ${error}`);
