@@ -18,7 +18,7 @@ var entitiesService = require('./src/services/entitiesService');
 
 nconf.argv().env().file('./config/default.json');
 
-var port = nconf.get("server:port");
+var port = nconf.get('server:port');
 var logger = new winston.Logger({
     transports: [new winston.transports.Console(), new winston.transports.File({
         filename: './var/log/server.log'
@@ -59,12 +59,14 @@ server.listen(port, function () {
     logger.info('PID ' + process.pid + ' Server is running on port: ' + port);
 });
 
-schedule.scheduleJob('0 0 * * *', function(){
-    entitiesService.unlockAll(function () {
-        logger.info('All entities unlocked');
-        io.sockets.emit("unlock-all", {});
+if (nconf.get('unlockAll:enabled')) {
+    schedule.scheduleJob(nconf.get('unlockAll:cron'), function(){
+        entitiesService.unlockAll(function () {
+            logger.info('All entities unlocked');
+            io.sockets.emit('unlock-all', {});
+        });
     });
-});
+}
 
 io.on('connection', function (socket) {
     logger.info('Socket connected: ' + socket.id);

@@ -9,5 +9,9 @@
     "socket": {
         "hostname": "localhost",
         "port": 3030
+    },
+    "unlockAll": {
+        "enabled": true,
+        "cron": "'0 0 * * *"
     }
 }
