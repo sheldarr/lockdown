@@ -68,10 +68,6 @@ if (nconf.get('unlockAll:enabled')) {
     });
 }
 
-io.on('connection', function (socket) {
+io.on('connect', function (socket) {
     logger.info('Socket connected: ' + socket.id);
-});
-
-io.on('disconenct', function (socket) {
-    logger.info('Socket disconnected: ' + socket.id);
 });
