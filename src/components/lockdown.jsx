@@ -10,11 +10,11 @@ toastr.options.extendedTimeOut = 1000
 toastr.options.progressBar = true;
 toastr.options.timout = 5000;
 
-const sortAlphabetically = function(a, b){
-    if(a.name < b.name) {
+const sortAlphabetically = (alpha, beta) => {
+    if (alpha.name < beta.name) {
         return -1;
     }
-    if(a.name > b.name) {
+    if (alpha.name > beta.name) {
         return 1;
     }
 
@@ -25,14 +25,25 @@ const Lockdown = React.createClass({
     getInitialState() {
         const currentUserId = Number(localStorage.getItem('currentUserId'));
 
-        return {currentUserId: currentUserId, entities: [], lastSync: "", socket: undefined, users: []}
+        return {
+            currentUserId: currentUserId,
+            desync: false,
+            entities: [],
+            lastSync: "",
+            socket: undefined,
+            users: []
+        }
     },
 
     componentDidMount() {
-        this.refreshEntities();
         this.refreshUsers();
+        this.refreshEntities();
 
         const socket = io.connect(`http://${config.socket.hostname}:${config.socket.port}`);
+
+        socket.on('connect', () => {
+            this.setState({desync: false});
+        })
 
         socket.on('create', (data) => {
             toastr.info(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.entityName} created`)
@@ -59,7 +70,14 @@ const Lockdown = React.createClass({
             this.refreshEntities();
         });
 
+        socket.on('disconnect', this.desync);
+
         this.setState({socket});
+    },
+
+    desync(error) {
+        this.setState({desync: true});
+        console.log(error);
     },
 
     refreshEntities() {
@@ -67,10 +85,10 @@ const Lockdown = React.createClass({
             return response.json();
         }).then((entities) => {
             entities.sort(sortAlphabetically);
-            this.setState({entities, lastSync: moment().format()});
+            this.setState({entities, desync: false, lastSync: moment().format()});
         }).catch((error) => {
-            console.log(error);
-            setTimeout(this.refreshEntities, 1000);
+            this.desync(error);
+            setTimeout(this.refreshEntities, config.reconnect.timeout);
         });
     },
 
@@ -79,9 +97,10 @@ const Lockdown = React.createClass({
             return response.json();
         }).then((users) => {
             users.sort(sortAlphabetically);
-            this.setState({users});
+            this.setState({users, desync: false, lastSync: moment().format()});
         }).catch((error) => {
-            console.log(error);
+            this.desync(error);
+            setTimeout(this.refreshUsers, config.reconnect.timeout);
         });
     },
 
@@ -102,16 +121,11 @@ const Lockdown = React.createClass({
 
         fetch(`/api/entity/${entityId}`, {
             method: 'PUT',
-            body: JSON.stringify({
-                lastModifiedById,
-                lastModificationDate
-            }),
+            body: JSON.stringify({lastModifiedById, lastModificationDate}),
             headers: {
                 'Content-Type': 'application/json'
-            },
-        }).catch((error) => {
-            console.log(error);
-        });
+            }
+        }).catch(this.desync);
     },
 
     getUserNameById(id) {
@@ -119,7 +133,7 @@ const Lockdown = React.createClass({
             return user.id === id;
         })
 
-        return user.name;
+        return user ? user.name : "";
     },
 
     render() {
@@ -129,12 +143,15 @@ const Lockdown = React.createClass({
             }}>
                 <div className="col-sm-10 col-sm-offset-1">
                     <div className="panel panel-primary">
-                        <div className="panel-heading"><span className="glyphicon glyphicon-lock" aria-hidden="true"></span>{' Lockdown'}</div>
+                        <div className="panel-heading">
+                            <span className="glyphicon glyphicon-lock" aria-hidden="true"></span>{' Lockdown'}</div>
                         <div className="panel-body">
                             <div className="row">
                                 <div className="col-sm-9">
-                                    <button className="btn btn-xs btn-info" onClick={this.refreshEntities}><span className="glyphicon glyphicon-refresh"></span></button>
-                                    {` Last sync: ${this.state.lastSync}`}
+                                    {this.state.desync
+                                        ? <span className="label label-warning" style={{fontSize: '1em'}}>{'Desync'}</span>
+                                        : <span>{` Last sync: ${this.state.lastSync}`}</span>
+                                    }
                                 </div>
                                 <div className="col-sm-3">
                                     <select className="form-control" onChange={this.setCurrentUser} value={this.state.currentUserId}>
@@ -164,12 +181,15 @@ const Lockdown = React.createClass({
                                                     <td>{entity.name}</td>
                                                     <td>{entity.lastModificationDate}</td>
                                                     <td>{this.getUserNameById(entity.lastModifiedById)}</td>
-                                                    <td>{entity.locked ? <span className="label label-danger">{'Locked'}</span>
-                                                        : <span className="label label-success">{'Unlocked'}</span>}
+                                                    <td>{entity.locked
+                                                            ? <span className="label label-danger">{'Locked'}</span>
+                                                            : <span className="label label-success">{'Unlocked'}</span>}
                                                     </td>
                                                     <td>
-                                                        <button className="btn btn-xs btn-info" disabled={this.state.currentUserId === 0 || (entity.locked && this.state.currentUserId !== entity.lastModifiedById)} onClick={this.toggleEntity.bind(this, entity.id)} type="button" >
-                                                            {entity.locked ? 'Unlock' : 'Lock'}
+                                                        <button className="btn btn-xs btn-info" disabled={this.state.currentUserId === 0 || (entity.locked && this.state.currentUserId !== entity.lastModifiedById)} onClick={this.toggleEntity.bind(this, entity.id)} type="button">
+                                                            {entity.locked
+                                                                ? 'Unlock'
+                                                                : 'Lock'}
                                                         </button>
                                                     </td>
                                                 </tr>

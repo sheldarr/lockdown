@@ -13,5 +13,8 @@
     "unlockAll": {
         "enabled": true,
         "cron": "'0 0 * * *"
+    },
+    "reconnect": {
+        "timeout": 1000
     }
 }
