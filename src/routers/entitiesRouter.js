@@ -2,6 +2,7 @@
 
 var express = require('express');
 var fs = require('fs');
+var moment = require('moment');
 
 module.exports = function (io) {
     var entitiesRouter = new express.Router();
@@ -66,10 +67,13 @@ module.exports = function (io) {
 
             var entity = {
                 "id": nextId,
-                "lastModificationDate": "",
-                "lastModifiedById": 0,
                 "name": request.body.entityName,
-                "locked": false
+                "locked": false,
+                "history": [{
+                    action: "create",
+                    userId: 0,
+                    date: moment().format()
+                }]
             };
 
             entities.push(entity);
@@ -100,25 +104,35 @@ module.exports = function (io) {
                 return response.sendStatus(404);
             }
 
-            if (!request.body.lastModifiedById || !request.body.lastModificationDate) {
+            if (!request.body.userId || !request.body.date) {
                 return response.sendStatus(400);
             }
 
-            if (entity.locked && entity.lastModifiedById !== Number(request.body.lastModifiedById)) {
+            if (entity.locked && entity.history[0].userId !== Number(request.body.userId)) {
                 return response.sendStatus(403);
             }
 
-            entity.lastModifiedById = Number(request.body.lastModifiedById);
-            entity.lastModificationDate = request.body.lastModificationDate;
             entity.locked = !entity.locked;
+
+            var historyEntry = {
+                action: entity.locked ? 'lock' : 'unlock',
+                date: request.body.date,
+                userId: Number(request.body.userId)
+            };
+
+            entity.history.push(historyEntry);
+
+            entity.history.sort(function(alpha, beta){
+                return new Date(beta.date) - new Date(alpha.date);
+            });
 
             fs.writeFile('./var/data/entities.json', JSON.stringify(entities), function () {
                 var eventName = entity.locked ? 'lock' : 'unlock';
 
                 io.sockets.emit(eventName, {
                     entityName: entity.name,
-                    modifiedById: entity.lastModifiedById,
-                    modificationDate: entity.lastModificationDate
+                    userId: historyEntry.userId,
+                    date: historyEntry.date
                 });
 
                 response.sendStatus(200);

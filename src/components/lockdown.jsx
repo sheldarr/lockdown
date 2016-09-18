@@ -47,27 +47,27 @@ const Lockdown = React.createClass({
         })
 
         socket.on('create', (data) => {
-            toastr.info(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.entityName} created`)
+            toastr.info(`${moment(data.date).format('HH:mm:ss')} ${data.entityName} created`)
             this.refreshEntities();
         });
 
         socket.on('delete', (data) => {
-            toastr.info(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.entityName} deleted`)
+            toastr.info(`${moment(data.date).format('HH:mm:ss')} ${data.entityName} deleted`)
             this.refreshEntities();
         });
 
         socket.on('unlock-all', (data) => {
-            toastr.info(`${moment(data.modificationDate).format('HH:mm:ss')} All entities unlocked`)
+            toastr.info(`${moment(data.date).format('HH:mm:ss')} All entities unlocked`)
             this.refreshEntities();
         });
 
         socket.on('unlock', (data) => {
-            toastr.success(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.entityName} unlocked by ${this.getUserNameById(data.modifiedById)}`)
+            toastr.success(`${moment(data.date).format('HH:mm:ss')} ${data.entityName} unlocked by ${this.getUserNameById(data.userId)}`)
             this.refreshEntities();
         });
 
         socket.on('lock', (data) => {
-            toastr.error(`${moment(data.modificationDate).format('HH:mm:ss')} ${data.entityName} locked by ${this.getUserNameById(data.modifiedById)}`)
+            toastr.error(`${moment(data.date).format('HH:mm:ss')} ${data.entityName} locked by ${this.getUserNameById(data.userId)}`)
             this.refreshEntities();
         });
 
@@ -117,12 +117,12 @@ const Lockdown = React.createClass({
             return user.id === this.state.currentUserId;
         })
 
-        const lastModifiedById = currentUser.id;
-        const lastModificationDate = moment().format();
+        const userId = currentUser.id;
+        const date = moment().format();
 
         fetch(`/api/entity/${entityId}`, {
             method: 'PUT',
-            body: JSON.stringify({lastModifiedById, lastModificationDate}),
+            body: JSON.stringify({userId, date}),
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -185,14 +185,14 @@ const Lockdown = React.createClass({
                                                 return (
                                                     <tr key={entity.id}>
                                                         <td>{entity.name}</td>
-                                                        <td>{entity.lastModificationDate}</td>
-                                                        <td>{this.getUserNameById(entity.lastModifiedById)}</td>
+                                                        <td>{entity.history[0].date}</td>
+                                                        <td>{this.getUserNameById(entity.history[0].userId)}</td>
                                                         <td>{entity.locked
                                                                 ? <span className="label label-danger">{'Locked'}</span>
                                                                 : <span className="label label-success">{'Unlocked'}</span>}
                                                         </td>
                                                         <td>
-                                                            <button className="btn btn-xs btn-info" disabled={this.state.currentUserId === 0 || (entity.locked && this.state.currentUserId !== entity.lastModifiedById)} onClick={this.toggleEntity.bind(this, entity.id)} type="button">
+                                                            <button className="btn btn-xs btn-info" disabled={this.state.currentUserId === 0 || (entity.locked && this.state.currentUserId !== entity.history[0].userId)} onClick={this.toggleEntity.bind(this, entity.id)} type="button">
                                                                 {entity.locked
                                                                     ? 'Unlock'
                                                                     : 'Lock'}

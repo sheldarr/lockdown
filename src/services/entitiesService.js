@@ -8,9 +8,14 @@ var entitiesService = {
         fs.readFile('./var/data/entities.json', 'utf8', function (error, data) {
             var entities = JSON.parse(data);
 
+            var historyEntry = {
+                action: "auto-unlock",
+                date: moment().format(),
+                userId: 0
+            };
+
             entities.forEach(function(entity) {
-                entity.lastModifiedById = 0
-                entity.lastModificationDate = moment().format();
+                entity.history.push(historyEntry);
                 entity.locked = false;
             });
 
