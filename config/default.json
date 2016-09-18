@@ -10,9 +10,11 @@
         "hostname": "localhost",
         "port": 3030
     },
-    "unlockAll": {
-        "enabled": true,
-        "cron": "'0 0 * * *"
+    "jobs": {
+        "unlockAll": {
+            "enabled": true,
+            "cron": "0 0 * * *"
+        }
     },
     "reconnect": {
         "timeout": 1000

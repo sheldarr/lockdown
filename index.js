@@ -59,8 +59,8 @@ server.listen(port, function () {
     logger.info('PID ' + process.pid + ' Server is running on port: ' + port);
 });
 
-if (nconf.get('unlockAll:enabled')) {
-    schedule.scheduleJob(nconf.get('unlockAll:cron'), function(){
+if (nconf.get('jobs:unlockAll:enabled')) {
+    schedule.scheduleJob(nconf.get('jobs:unlockAll:cron'), function(){
         entitiesService.unlockAll(function () {
             logger.info('All entities unlocked');
             io.sockets.emit('unlock-all', {});
