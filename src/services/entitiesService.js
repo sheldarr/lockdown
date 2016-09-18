@@ -16,6 +16,11 @@ var entitiesService = {
 
             entities.forEach(function(entity) {
                 entity.history.push(historyEntry);
+
+                entity.history.sort(function(alpha, beta){
+                    return new Date(beta.date) - new Date(alpha.date);
+                });
+                
                 entity.locked = false;
             });
 
