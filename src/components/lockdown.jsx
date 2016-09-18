@@ -1,5 +1,6 @@
 'use strict';
 
+import BlockUi from 'react-block-ui';
 import React from 'react';
 import config from '../../config/default.json';
 import moment from 'moment';
@@ -133,7 +134,9 @@ const Lockdown = React.createClass({
             return user.id === id;
         })
 
-        return user ? user.name : "";
+        return user
+            ? user.name
+            : "";
     },
 
     render() {
@@ -149,9 +152,11 @@ const Lockdown = React.createClass({
                             <div className="row">
                                 <div className="col-sm-9">
                                     {this.state.desync
-                                        ? <span className="label label-warning" style={{fontSize: '1em'}}>{'Desync'}</span>
+                                        ? <span className="label label-warning" style={{
+                                                fontSize: '1em'
+                                            }}>{'Desync'}</span>
                                         : <span>{` Last sync: ${this.state.lastSync}`}</span>
-                                    }
+}
                                 </div>
                                 <div className="col-sm-3">
                                     <select className="form-control" onChange={this.setCurrentUser} value={this.state.currentUserId}>
@@ -164,39 +169,41 @@ const Lockdown = React.createClass({
                                 </div>
                             </div>
                             <div className="row">
-                                <table className="table table-condensed table-hover table-striped ">
-                                    <thead>
-                                        <tr>
-                                            <th>{'Entity'}</th>
-                                            <th>{'Last Modification Date'}</th>
-                                            <th>{'Last Modified By'}</th>
-                                            <th>{'Status'}</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {this.state.entities.map((entity) => {
-                                            return (
-                                                <tr key={entity.id}>
-                                                    <td>{entity.name}</td>
-                                                    <td>{entity.lastModificationDate}</td>
-                                                    <td>{this.getUserNameById(entity.lastModifiedById)}</td>
-                                                    <td>{entity.locked
-                                                            ? <span className="label label-danger">{'Locked'}</span>
-                                                            : <span className="label label-success">{'Unlocked'}</span>}
-                                                    </td>
-                                                    <td>
-                                                        <button className="btn btn-xs btn-info" disabled={this.state.currentUserId === 0 || (entity.locked && this.state.currentUserId !== entity.lastModifiedById)} onClick={this.toggleEntity.bind(this, entity.id)} type="button">
-                                                            {entity.locked
-                                                                ? 'Unlock'
-                                                                : 'Lock'}
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
+                                <BlockUi blocking={this.state.desync}>
+                                    <table className="table table-condensed table-hover table-striped ">
+                                        <thead>
+                                            <tr>
+                                                <th>{'Entity'}</th>
+                                                <th>{'Last Modification Date'}</th>
+                                                <th>{'Last Modified By'}</th>
+                                                <th>{'Status'}</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {this.state.entities.map((entity) => {
+                                                return (
+                                                    <tr key={entity.id}>
+                                                        <td>{entity.name}</td>
+                                                        <td>{entity.lastModificationDate}</td>
+                                                        <td>{this.getUserNameById(entity.lastModifiedById)}</td>
+                                                        <td>{entity.locked
+                                                                ? <span className="label label-danger">{'Locked'}</span>
+                                                                : <span className="label label-success">{'Unlocked'}</span>}
+                                                        </td>
+                                                        <td>
+                                                            <button className="btn btn-xs btn-info" disabled={this.state.currentUserId === 0 || (entity.locked && this.state.currentUserId !== entity.lastModifiedById)} onClick={this.toggleEntity.bind(this, entity.id)} type="button">
+                                                                {entity.locked
+                                                                    ? 'Unlock'
+                                                                    : 'Lock'}
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </BlockUi>
                             </div>
                         </div>
                     </div>

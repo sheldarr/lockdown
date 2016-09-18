@@ -7,9 +7,10 @@
     "node": "4.4.x"
   },
   "scripts": {
-    "start": "forever start ./index.js",
-    "start-dev": "nodemon ./index.js",
-    "stop": "forever stop ./index.js",
+    "start": "pm2 start ./index.js",
+    "start-dev": "pm2 start ./index.js --watch ",
+    "stop": "pm2 delete ./index.js",
+    "list": "pm2 list",
     "watch": "webpack --progress --color --watch",
     "transpile": "babel . --out-dir . --ignore application.jsx,bin,node_modules,public,webpack.config.js"
   },
@@ -23,15 +24,13 @@
     "babel-preset-react": "^6.11.1",
     "eslint": "^3.5.0",
     "eslint-plugin-react": "^6.2.0",
-    "nodemon": "^1.10.2",
+    "json-loader": "^0.5.4",
     "webpack": "^1.13.2"
   },
   "dependencies": {
     "babel-polyfill": "^6.13.0",
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
-    "forever": "^0.15.2",
-    "json-loader": "^0.5.4",
     "moment": "^2.14.1",
     "morgan": "^1.7.0",
     "nconf": "^0.8.4",
@@ -41,6 +40,8 @@
     "toastr": "^2.1.2",
     "winston": "^2.2.0",
     "react-router": "^2.8.1",
-    "node-schedule": "^1.1.1"
+    "node-schedule": "^1.1.1",
+    "react-block-ui": "^0.1.1",
+    "pm2": "^2.0.12"
   }
 }
