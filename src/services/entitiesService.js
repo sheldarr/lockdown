@@ -2,6 +2,7 @@
 
 var fs = require('fs');
 var moment = require ('moment');
+var uuid = require('node-uuid');
 
 var entitiesService = {
     unlockAll: function(done) {
@@ -9,6 +10,7 @@ var entitiesService = {
             var entities = JSON.parse(data);
 
             var historyEntry = {
+                id: uuid.v4(),
                 action: "auto-unlock",
                 date: moment().format(),
                 userId: 0
@@ -20,7 +22,7 @@ var entitiesService = {
                 entity.history.sort(function(alpha, beta){
                     return new Date(beta.date) - new Date(alpha.date);
                 });
-                
+
                 entity.locked = false;
             });
 

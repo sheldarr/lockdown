@@ -3,13 +3,6 @@
         "hostname": "localhost",
         "port": 3030
     },
-    "server": {
-        "port": 3030
-    },
-    "socket": {
-        "hostname": "localhost",
-        "port": 3030
-    },
     "jobs": {
         "unlockAll": {
             "enabled": true,
@@ -18,5 +11,12 @@
     },
     "reconnect": {
         "timeout": 1000
+    },
+    "server": {
+        "port": 3030
+    },
+    "socket": {
+        "hostname": "localhost",
+        "port": 3030
     }
 }

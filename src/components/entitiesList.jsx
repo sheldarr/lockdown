@@ -2,6 +2,7 @@
 
 import React from 'react';
 import config from '../../config/default.json';
+import { browserHistory } from 'react-router';
 
 const EntitiesList = React.createClass({
     getInitialState() {
@@ -100,6 +101,11 @@ const EntitiesList = React.createClass({
                                         })}
                                     </tbody>
                                 </table>
+                            </div>
+                            <div className="row">
+                                <button onClick={browserHistory.push.bind(this, '/')} className="btn btn-xs btn-info" style={{marginLeft: '1em'}}>
+                                    <span className="glyphicon glyphicon-arrow-left"/>{'  Go Back'}
+                                </button>
                             </div>
                         </div>
                     </div>

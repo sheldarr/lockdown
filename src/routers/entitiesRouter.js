@@ -3,6 +3,7 @@
 var express = require('express');
 var fs = require('fs');
 var moment = require('moment');
+var uuid = require('node-uuid');
 
 module.exports = function (io) {
     var entitiesRouter = new express.Router();
@@ -15,6 +16,30 @@ module.exports = function (io) {
 
             try {
                 return response.json(JSON.parse(data));
+            } catch (error) {
+                return response.sendStatus(503);
+            }
+        });
+    });
+
+    entitiesRouter.get('/entity/:entityId', function (request, response, next) {
+        fs.readFile('./var/data/entities.json', 'utf8', function (error, data) {
+            if (error) {
+                return next(error);
+            }
+
+            try {
+                var entities = JSON.parse(data);
+
+                var entity = entities.find(function (entity) {
+                    return entity.id === Number(request.params.entityId);
+                });
+
+                if (!entity) {
+                    return response.sendStatus(404);
+                }
+
+                return response.json(entity);
             } catch (error) {
                 return response.sendStatus(503);
             }
@@ -115,6 +140,7 @@ module.exports = function (io) {
             entity.locked = !entity.locked;
 
             var historyEntry = {
+                "id": uuid.v4(),
                 action: entity.locked ? 'lock' : 'unlock',
                 date: request.body.date,
                 userId: Number(request.body.userId)

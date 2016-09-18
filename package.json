@@ -42,6 +42,7 @@
     "react-router": "^2.8.1",
     "node-schedule": "^1.1.1",
     "react-block-ui": "^0.1.1",
-    "pm2": "^2.0.12"
+    "pm2": "^2.0.12",
+    "node-uuid": "^1.4.7"
   }
 }

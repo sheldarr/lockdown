@@ -4,6 +4,7 @@ import BlockUi from 'react-block-ui';
 import React from 'react';
 import config from '../../config/default.json';
 import moment from 'moment';
+import { browserHistory } from 'react-router';
 
 toastr.options.closeButton = true;
 toastr.options.closeDuration = 300;
@@ -74,6 +75,10 @@ const Lockdown = React.createClass({
         socket.on('disconnect', this.desync);
 
         this.setState({socket});
+    },
+
+    componentWillUnmount() {
+        this.state.socket.disconnect();
     },
 
     desync(error) {
@@ -196,6 +201,9 @@ const Lockdown = React.createClass({
                                                                 {entity.locked
                                                                     ? 'Unlock'
                                                                     : 'Lock'}
+                                                            </button>
+                                                            <button className="btn btn-xs btn-info" onClick={browserHistory.push.bind(this, `/entity/${entity.id}/history`)} style={{marginLeft: '1em'}} type="button">
+                                                                {'History'}
                                                             </button>
                                                         </td>
                                                     </tr>
