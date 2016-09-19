@@ -5,23 +5,13 @@ import React from 'react';
 import config from '../../config/default.json';
 import moment from 'moment';
 import { browserHistory } from 'react-router';
+import { alphabetically } from '../shared/sort';
 
 toastr.options.closeButton = true;
 toastr.options.closeDuration = 300;
 toastr.options.extendedTimeOut = 1000
 toastr.options.progressBar = true;
 toastr.options.timout = 5000;
-
-const sortAlphabetically = (alpha, beta) => {
-    if (alpha.name < beta.name) {
-        return -1;
-    }
-    if (alpha.name > beta.name) {
-        return 1;
-    }
-
-    return 0;
-};
 
 const Lockdown = React.createClass({
     getInitialState() {
@@ -90,7 +80,7 @@ const Lockdown = React.createClass({
         fetch(`http://${config.api.hostname}:${config.api.port}/api/entity`).then((response) => {
             return response.json();
         }).then((entities) => {
-            entities.sort(sortAlphabetically);
+            entities.sort(alphabetically);
             this.setState({entities, desync: false, lastSync: moment().format()});
         }).catch((error) => {
             this.desync(error);
@@ -102,7 +92,7 @@ const Lockdown = React.createClass({
         fetch(`http://${config.api.hostname}:${config.api.port}/api/user`).then((response) => {
             return response.json();
         }).then((users) => {
-            users.sort(sortAlphabetically);
+            users.sort(alphabetically);
             this.setState({users, desync: false, lastSync: moment().format()});
         }).catch((error) => {
             this.desync(error);
