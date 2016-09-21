@@ -1,6 +1,5 @@
 # Data
-entities.json
-users.json
+var/data/*
 
 # Certificates
 *.crt
@@ -11,7 +10,6 @@ users.json
 bundle.js
 
 # Logs
-logs
 *.log
 npm-debug.log*
 
