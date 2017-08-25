@@ -1,0 +1,140 @@
+[
+    {
+        "id": null,
+        "name": "Shovel Nº 1",
+        "locked": false,
+        "history": [
+            {
+                "action": "create",
+                "userId": 0,
+                "date": "2017-08-25T15:04:03+02:00"
+            }
+        ]
+    },
+    {
+        "id": 1,
+        "name": "Shovel Nº 2",
+        "locked": true,
+        "history": [
+            {
+                "id": "c475d013-63dc-4dab-905d-2078fbc6e480",
+                "action": "lock",
+                "date": "2017-08-25T15:06:28+02:00",
+                "userId": 6
+            },
+            {
+                "id": "3b48e9fa-d11a-47f6-bd49-5a4c1abf4d6a",
+                "action": "unlock",
+                "date": "2017-08-25T15:06:24+02:00",
+                "userId": 3
+            },
+            {
+                "id": "44a7d938-d013-4aac-9f2e-cdf9dc127154",
+                "action": "lock",
+                "date": "2017-08-25T15:06:01+02:00",
+                "userId": 3
+            },
+            {
+                "action": "create",
+                "userId": 0,
+                "date": "2017-08-25T15:04:09+02:00"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "name": "Hammer Nº 1",
+        "locked": false,
+        "history": [
+            {
+                "action": "create",
+                "userId": 0,
+                "date": "2017-08-25T15:04:17+02:00"
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "name": "Hammer Nº 2",
+        "locked": true,
+        "history": [
+            {
+                "id": "f57e6498-8589-4c30-bd0a-eadbb3cb495d",
+                "action": "lock",
+                "date": "2017-08-25T15:05:42+02:00",
+                "userId": 5
+            },
+            {
+                "action": "create",
+                "userId": 0,
+                "date": "2017-08-25T15:04:26+02:00"
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "name": "Hammer Nº 3",
+        "locked": false,
+        "history": [
+            {
+                "action": "create",
+                "userId": 0,
+                "date": "2017-08-25T15:04:31+02:00"
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "name": "Hammer Nº 4",
+        "locked": true,
+        "history": [
+            {
+                "id": "5e7c0b46-c0ab-4811-8101-2df5509c6c5e",
+                "action": "lock",
+                "date": "2017-08-25T15:06:07+02:00",
+                "userId": 5
+            },
+            {
+                "action": "create",
+                "userId": 0,
+                "date": "2017-08-25T15:04:36+02:00"
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "name": "Pickaxe Nº 1",
+        "locked": false,
+        "history": [
+            {
+                "action": "create",
+                "userId": 0,
+                "date": "2017-08-25T15:04:46+02:00"
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "name": "Pickaxe Nº 2",
+        "locked": false,
+        "history": [
+            {
+                "action": "create",
+                "userId": 0,
+                "date": "2017-08-25T15:04:52+02:00"
+            }
+        ]
+    },
+    {
+        "id": 8,
+        "name": "Pickaxe Nº 3",
+        "locked": false,
+        "history": [
+            {
+                "action": "create",
+                "userId": 0,
+                "date": "2017-08-25T15:05:01+02:00"
+            }
+        ]
+    }
+]
